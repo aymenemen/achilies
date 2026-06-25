@@ -262,6 +262,7 @@ export const HOME_CSS = `
   .home-root .findings-section { background: var(--night); }
   .home-root .findings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; margin-top: 3rem; background: var(--dust-line); border: 1px solid var(--dust-line); }
   .home-root .finding-card { background: var(--night); padding: 2.5rem 2rem; position: relative; overflow: hidden; transition: background 0.3s; }
+  .home-root .finding-card-wide { grid-column: span 2; }
   .home-root .finding-card:hover { background: rgba(180,100,40,0.08); }
   .home-root .finding-num { font-family: 'Playfair Display', serif; font-size: 5rem; font-weight: 900; color: rgba(212,95,43,0.12); line-height: 1; position: absolute; top: 1rem; right: 1.5rem; font-style: italic; pointer-events: none; }
   .home-root .finding-tag { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ember); margin-bottom: 1rem; }
@@ -332,6 +333,7 @@ export const HOME_CSS = `
   .home-root .method-cell { background: var(--pale); padding: 1.5rem; }
   .home-root .method-cell-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ember); margin-bottom: 0.5rem; }
   .home-root .method-cell-value { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--ink); }
+  .home-root .method-metrics-grid { margin-top: 3rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
 
   /* FOOTER */
   .home-root footer { background: var(--night); padding: 3rem; border-top: 1px solid var(--dust-line); display: flex; justify-content: space-between; align-items: center; }
@@ -346,6 +348,7 @@ export const HOME_CSS = `
     .home-root .context-grid, .home-root .paradox-grid, .home-root .aod-grid { grid-template-columns: 1fr; }
     .home-root .findings-grid { grid-template-columns: 1fr; }
     .home-root .method-grid { grid-template-columns: 1fr 1fr; }
+    .home-root .method-metrics-grid { grid-template-columns: 1fr; }
     .home-root .risk-section { grid-template-columns: 1fr; }
     .home-root .hero { padding: 1.5rem; }
     .home-root .hero-nav { flex-direction: column; gap: 1.5rem; }
@@ -491,7 +494,7 @@ export const HOME_BODY = `
     <div class="finding-card fade-up"><div class="finding-num">02</div><div class="finding-tag">Feature Engineering</div><div class="finding-title">AOD features uniformly degrade every model tested</div><div class="finding-body">Aerosol Optical Depth — expected to improve dust-event prediction — consistently increased nRMSE across all architectures. Likely cause: temporal and spatial resolution mismatch between satellite AOD products and sub-hourly ground conditions.</div><div class="finding-stat">+0.22–0.48 pp</div><div class="finding-stat-sub">Range of nRMSE increase from adding AOD across all models</div></div>
     <div class="finding-card fade-up"><div class="finding-num">03</div><div class="finding-tag">Statistical Paradox</div><div class="finding-title">The dust penalty metric inverts the accuracy ranking</div><div class="finding-body">The model with the lowest absolute dust-day error (Transformer: 0.033 Kt) has the highest dust penalty (256%). The worst absolute dust performer (RF: 0.118 Kt) has the lowest penalty (60%). Dust penalty as defined rewards mediocrity on clear days.</div><div class="finding-stat">4× inversion</div><div class="finding-stat-sub">Penalty rank order inverts vs absolute MAE_dust rank order</div></div>
     <div class="finding-card fade-up"><div class="finding-num">04</div><div class="finding-tag">Operational Conclusion</div><div class="finding-title">Best global model ≠ most reliable operational deployment</div><div class="finding-body">For CSP grid dispatch, the Transformer's error variance under dust presents an unacceptable operational risk. XGBoost No AOD offers a more stable error envelope, predictable dust-event behavior, and no satellite data pipeline dependency.</div><div class="finding-stat">XGBoost</div><div class="finding-stat-sub">Recommended operational configuration — no AOD features</div></div>
-    <div class="finding-card fade-up" style="grid-column: span 2"><div class="finding-num">05</div><div class="finding-tag">Architectural Insight</div><div class="finding-title">Random Forest's mediocrity is operationally instructive</div><div class="finding-body">RF achieves the worst global accuracy but the most consistent relative degradation between clean and dust days (60–61% penalty, far below Transformer's 243%). This is not dust robustness — it is mediocre baseline performance providing a low floor. The implication: models that genuinely handle dust well must be evaluated on absolute dust-day MAE, not relative penalty, to avoid rewarding consistent underperformance.</div></div>
+    <div class="finding-card finding-card-wide fade-up"><div class="finding-num">05</div><div class="finding-tag">Architectural Insight</div><div class="finding-title">Random Forest's mediocrity is operationally instructive</div><div class="finding-body">RF achieves the worst global accuracy but the most consistent relative degradation between clean and dust days (60–61% penalty, far below Transformer's 243%). This is not dust robustness — it is mediocre baseline performance providing a low floor. The implication: models that genuinely handle dust well must be evaluated on absolute dust-day MAE, not relative penalty, to avoid rewarding consistent underperformance.</div></div>
     <div class="finding-card fade-up"><div class="finding-num">06</div><div class="finding-tag">Data Quality Flag</div><div class="finding-title">MAE_Wm² missing for three architectures</div><div class="finding-body">RF and MLP report NaN for the physical-unit MAE. This value should be derivable from MAE_Kt × mean clear-sky irradiance. The gap requires resolution before submission — a reviewer will request it immediately.</div><div class="finding-stat">3 of 8</div><div class="finding-stat-sub">Configurations missing physical unit error conversion</div></div>
   </div>
 </section>
@@ -525,15 +528,17 @@ export const HOME_BODY = `
       <div class="aod-conclusion"><strong>Reviewer note:</strong> The paper should report the exact AOD product used (MODIS MOD04? SEVIRI? Sentinel-5P?), its native temporal resolution, and whether any temporal alignment or interpolation was applied. Without this, the negative AOD finding cannot be replicated or correctly interpreted.</div>
     </div>
     <div>
-      <table class="aod-impact-table">
-        <thead><tr><th>Architecture</th><th>nRMSE No AOD</th><th>nRMSE + AOD</th><th>Δ nRMSE</th><th>Dust penalty Δ</th></tr></thead>
-        <tbody>
-          <tr><td>Transformer</td><td>5.97%</td><td>6.30%</td><td class="delta-neg">+0.33 pp</td><td class="delta-neg">+13.2 pp</td></tr>
-          <tr><td>XGBoost</td><td>7.75%</td><td>8.03%</td><td class="delta-neg">+0.28 pp</td><td style="color:#7BB88C">−22.3 pp</td></tr>
-          <tr><td>MLP</td><td>13.48%</td><td>13.96%</td><td class="delta-neg">+0.48 pp</td><td class="delta-neg">+13.8 pp</td></tr>
-          <tr><td>Random Forest</td><td>15.31%</td><td>15.53%</td><td class="delta-neg">+0.22 pp</td><td style="color:#7BB88C">−1.2 pp</td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap" style="margin-bottom:0">
+        <table class="aod-impact-table">
+          <thead><tr><th>Architecture</th><th>nRMSE No AOD</th><th>nRMSE + AOD</th><th>Δ nRMSE</th><th>Dust penalty Δ</th></tr></thead>
+          <tbody>
+            <tr><td>Transformer</td><td>5.97%</td><td>6.30%</td><td class="delta-neg">+0.33 pp</td><td class="delta-neg">+13.2 pp</td></tr>
+            <tr><td>XGBoost</td><td>7.75%</td><td>8.03%</td><td class="delta-neg">+0.28 pp</td><td style="color:#7BB88C">−22.3 pp</td></tr>
+            <tr><td>MLP</td><td>13.48%</td><td>13.96%</td><td class="delta-neg">+0.48 pp</td><td class="delta-neg">+13.8 pp</td></tr>
+            <tr><td>Random Forest</td><td>15.31%</td><td>15.53%</td><td class="delta-neg">+0.22 pp</td><td style="color:#7BB88C">−1.2 pp</td></tr>
+          </tbody>
+        </table>
+      </div>
       <div style="margin-top:1.5rem;padding:1rem;background:rgba(255,255,255,0.02);border:1px solid var(--dust-line);border-radius:2px">
         <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--fog);margin-bottom:0.5rem">XGBoost anomaly</div>
         <div style="font-size:0.75rem;line-height:1.7;color:var(--fog)">XGBoost uniquely shows improved dust penalty with AOD (+AOD → −22.3 pp penalty) despite worse global nRMSE. Tree-based splits can isolate high-AOD as a partition, creating conditional dust-regime behavior. Continuous activations in MLP cannot form such hard decision boundaries.</div>
@@ -592,7 +597,7 @@ export const HOME_BODY = `
     <div class="method-cell"><div class="method-cell-label">Stratification</div><div class="method-cell-value">Clean / Dust days</div></div>
     <div class="method-cell"><div class="method-cell-label">Physical conversion</div><div class="method-cell-value">MAE_Kt → W/m²</div></div>
   </div>
-  <div style="margin-top:3rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem">
+  <div class="method-metrics-grid">
     <div style="padding:1.5rem;border:1px solid rgba(180,130,60,0.2);border-radius:2px;background:rgba(180,130,60,0.04)"><div class="method-cell-label" style="color:var(--ember)">nRMSE</div><div style="font-size:0.78rem;line-height:1.7;color:#4A3F30;font-family:'Fraunces',serif">Global normalized RMSE across entire test set. Dominated by the majority class (clear days).</div></div>
     <div style="padding:1.5rem;border:1px solid rgba(180,130,60,0.2);border-radius:2px;background:rgba(180,130,60,0.04)"><div class="method-cell-label" style="color:var(--ember)">Skill Score</div><div style="font-size:0.78rem;line-height:1.7;color:#4A3F30;font-family:'Fraunces',serif">Relative improvement over Smart Persistence. 0 = no better than baseline; 1 = perfect forecast.</div></div>
     <div style="padding:1.5rem;border:1px solid rgba(180,130,60,0.2);border-radius:2px;background:rgba(180,130,60,0.04)"><div class="method-cell-label" style="color:var(--ember)">Dust Penalty</div><div style="font-size:0.78rem;line-height:1.7;color:#4A3F30;font-family:'Fraunces',serif">Proportional MAE increase from clean to dust days. Must be read alongside absolute MAE_dust values.</div></div>

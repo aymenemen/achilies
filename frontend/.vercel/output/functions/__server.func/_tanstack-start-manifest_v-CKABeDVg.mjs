@@ -1,4 +1,0 @@
-const tsrStartManifest = () => ({ routes: { __root__: { filePath: "C:/Users/aymen/Desktop/achilies/frontend/src/routes/__root.tsx", children: ["/", "/live", "/predict", "/sitemap.xml"], preloads: ["/assets/index-DQroLkoY.js"], scripts: [{ attrs: { type: "module", async: true, src: "/assets/index-DQroLkoY.js" } }] }, "/": { filePath: "C:/Users/aymen/Desktop/achilies/frontend/src/routes/index.tsx", children: void 0, preloads: ["/assets/index-DpFTCV5I.js"] }, "/live": { filePath: "C:/Users/aymen/Desktop/achilies/frontend/src/routes/live.tsx", children: void 0, preloads: ["/assets/live-CAprQwPw.js", "/assets/use-fade-up-BnJUuY4Z.js"] }, "/predict": { filePath: "C:/Users/aymen/Desktop/achilies/frontend/src/routes/predict.tsx", children: void 0, preloads: ["/assets/predict-DNHvKUgQ.js", "/assets/use-fade-up-BnJUuY4Z.js"] } } });
-export {
-  tsrStartManifest
-};

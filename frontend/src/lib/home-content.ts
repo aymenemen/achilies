@@ -348,6 +348,8 @@ export const HOME_CSS = `
     .home-root .method-grid { grid-template-columns: 1fr 1fr; }
     .home-root .risk-section { grid-template-columns: 1fr; }
     .home-root .hero { padding: 1.5rem; }
+    .home-root .hero-nav { flex-direction: column; gap: 1.5rem; }
+    .home-root .nav-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
     .home-root section { padding: 4rem 1.5rem; }
     .home-root footer { flex-direction: column; gap: 1rem; text-align: center; }
   }

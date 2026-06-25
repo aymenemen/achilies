@@ -314,7 +314,7 @@ export const HOME_CSS = `
   .home-root .aod-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; margin-top: 3rem; align-items: start; }
   .home-root .aod-text { font-family: 'Fraunces', serif; font-size: 1rem; line-height: 1.9; color: var(--fog); font-style: italic; }
   .home-root .aod-text strong { font-style: normal; color: var(--sand); font-weight: 300; }
-  .home-root .aod-impact-table { width: 100%; border-collapse: collapse; }
+  .home-root .aod-impact-table { width: 100%; border-collapse: collapse; min-width: 600px; }
   .home-root .aod-impact-table thead tr { border-bottom: 1px solid var(--dust-line); }
   .home-root .aod-impact-table th { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--fog); padding: 0.5rem 0.75rem; text-align: right; text-transform: uppercase; font-weight: 400; }
   .home-root .aod-impact-table th:first-child { text-align: left; }
@@ -345,11 +345,12 @@ export const HOME_CSS = `
   .home-root .fade-up.visible { opacity: 1; transform: translateY(0); }
 
   @media (max-width: 900px) {
-    .home-root .context-grid, .home-root .paradox-grid, .home-root .aod-grid { grid-template-columns: 1fr; }
-    .home-root .findings-grid { grid-template-columns: 1fr; }
-    .home-root .method-grid { grid-template-columns: 1fr 1fr; }
-    .home-root .method-metrics-grid { grid-template-columns: 1fr; }
-    .home-root .risk-section { grid-template-columns: 1fr; }
+    .home-root .context-grid, .home-root .paradox-grid, .home-root .aod-grid { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+    .home-root .findings-grid { grid-template-columns: minmax(0, 1fr); }
+    .home-root .finding-card-wide { grid-column: auto; }
+    .home-root .method-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .home-root .method-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+    .home-root .risk-section { grid-template-columns: minmax(0, 1fr); }
     .home-root .hero { padding: 1.5rem; }
     .home-root .hero-nav { flex-direction: column; gap: 1.5rem; }
     .home-root .nav-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
